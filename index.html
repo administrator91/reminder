@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certification Reminder</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #F39C12, #8E44AD); /* INE-like orange-purple gradient */
+            background-size: 400% 400%;
+            animation: gradientBackground 15s ease infinite;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            overflow: hidden; /* Prevent scrolling */
+            height: 100%;
+        }
+
+        /* Container Box Styling */
+        .container {
+            width: 98%;
+            max-width: 600px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transform: translateY(-20px);
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        /* Badge Circle */
+        .badge-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: #34495e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 1s ease-in-out forwards;
+        }
+
+        .badge-circle img {
+            width: 80%;
+            border-radius: 50%;
+        }
+
+        /* Subject Heading */
+        .subject {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #f1c40f;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            animation: fadeInText 2s ease-in-out forwards;
+        }
+
+        /* Countdown Timer */
+        .countdown {
+            font-size: 2.6em; /* Default size for larger screens */
+            font-weight: bold;
+            margin: 20px;
+            color: #ecf0f1;
+            animation: fadeInText 2s ease-in-out forwards;
+        }
+
+        /* Email Reminder Message */
+        .email-reminder {
+            font-size: 1.2em;
+            color: #ecf0f1;
+            margin-bottom: 30px;
+            background-color: rgba(52, 152, 219, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            animation: fadeInText 2s ease-in-out forwards;
+        }
+
+        /* Quotes Styling */
+        .quote {
+            font-size: 1.5em;
+            margin: 20px;
+            color: #ecf0f1;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        /* Name Styling */
+        .name {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        /* Certification Info Styling */
+        .certification-info {
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .countdown {
+                font-size: 2.0em; /* Smaller font size for mobile devices */
+            }
+            .quote {
+                font-size: 1.2em;
+            }
+            .container {
+                padding: 20px;
+            }
+            .certification-info {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .countdown {
+                font-size: 1.4em; /* Even smaller font size for very small screens */
+            }
+        }
+
+        /* Animations */
+        @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeInText {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Email Reminder Message (Showing only days remaining) -->
+        <div class="email-reminder">
+            <strong>Reminder:</strong> Only <span id="countdownDays"></span> days left until your CRTA Certification! Keep up the great work – you're almost there!
+        </div>
+
+        <!-- Subject Heading -->
+        <div class="subject">
+            Preparation For Next Certification
+        </div>
+
+        <!-- Badge Circle with Certification Badge -->
+        <div class="badge-circle">
+            <img src="/badges/crta.png" alt="Certification Badge">
+        </div>
+
+        <!-- Countdown Timer (Days, Hours, Minutes, Seconds - Separated by ":") -->
+        <div class="countdown" id="countdownFull">Loading...</div>
+
+        <!-- Certification Info -->
+        <div class="certification-info">
+            <div style="color:orangered;"><b>Certification: CRTA</b></div>
+            <div style="color:orangered;"><b>Provider: CWL</b></div>
+        </div>
+
+        <!-- Random Quotes -->
+        <div class="quote" id="quote">"Stay focused, stay ethical!"</div>
+
+        <!-- Name -->
+        <div class="name">Rajarshi Sarkar</div>
+    </div>
+
+    <script>
+        // Countdown Timer Script
+        function countdownTimer() {
+            const examDate = new Date("February 24, 2025 23:00:00").getTime(); // Set your exam date here
+            const now = new Date().getTime();
+            const timeRemaining = examDate - now;
+
+            if (timeRemaining >= 0) {
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)); // Calculate remaining days
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Remaining hours
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60)); // Remaining minutes
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000); // Remaining seconds
+
+                // Update the days only in the reminder section
+                document.getElementById("countdownDays").innerHTML = days;
+
+                // Update the full countdown (D : H : M : S)
+                document.getElementById("countdownFull").innerHTML = 
+                    days + " D : " + hours + " H : " + minutes + " M : " + seconds + " S";
+            } else {
+                document.getElementById("countdownFull").innerHTML = "Time's Up!";
+                document.getElementById("countdownDays").innerHTML = "0";
+            }
+        }
+        setInterval(countdownTimer, 1000);
+
+        // Random Quotes Script
+        const quotes = [
+            "Success in cybersecurity is preparation and dedication!",
+            "Every challenge makes you stronger!",
+            "Keep learning, stay ethical, achieve greatness!",
+            "The journey to certification is worth every effort!",
+            "Cybersecurity: Where knowledge meets vigilance!",
+            "Small steps lead to big successes in cyber!",
+            "Stay focused, stay ethical!",
+            "You’re one step closer to achieving your goals!"
+        ];
+        function displayRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            const quoteElement = document.getElementById("quote");
+
+            // Trigger animation for smooth transition
+            quoteElement.classList.remove("fadeIn");
+            setTimeout(() => {
+                quoteElement.classList.add("fadeIn");
+                quoteElement.innerText = quotes[randomIndex];
+            }, 200);
+        }
+        setInterval(displayRandomQuote, 5000); // Change quote every 5 seconds
+    </script>
+
+</body>
+</html>
